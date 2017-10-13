@@ -36,9 +36,29 @@ exports.createSports = (req,res) => {
     res.redirect('/create');
 };
 
+//Chrome Extension
+exports.createExtension = (req,res,next) => {
+    // console.log(name,type);
+    const sport = new Sport({
+        name: req.body.name,
+        type: req.body.type
+    });
+    sport.save((err) =>{
+        if(err){return next(err);}
+        res.send("json");
+    });
+};
+
 exports.showSports = (req, res) => {
     Sport.find({}, function(err, allSports){
         if(err){req.flash('errors', {msg: "Unable to find all sports"});}
         res.render('sports/list', {allSports: allSports});
     })
 };
+
+exports.showSport = (req, res) => {
+    Sport.findOne({name: req.params.name}, function(err, sport){
+        if(err){req.flash('errors', {msg: 'The sport you are looking for is not found...!!! TRY AGAIN !!!'})}
+        res.render("sports/sport", {sport: sport});
+    })
+}
