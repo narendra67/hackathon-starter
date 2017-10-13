@@ -2,23 +2,32 @@ extends ../layout
 
 block content
     style(type="text/css").
-        table,td{
-            border: 1px solid black
+        body {
+
+        }
+        table,th{
+            border: 2px solid black;
+            margin: 0 auto;
+            text-align: center
         }
         td {
-        padding:3px
+            border: 1px solid black;
+            padding:15px
         }
 
     table
         tr
             //td= "ID"
-            td= "Name"
-            td= "Type"
+            th= "Name"
+            th= "Type"
         each sport in allSports
             tr
                 //td= sport.id
                 td= sport.name
                 td= sport.type
+        else
+            tr
+                td= "No Sports are updated yet"
     //ul
     //    each sport in allSports
     //        li= sport.id
