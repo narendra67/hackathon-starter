@@ -34,4 +34,11 @@ exports.createSports = (req,res) => {
         })
     }
     res.redirect('/create');
-}
+};
+
+exports.showSports = (req, res) => {
+    Sport.find({}, function(err, allSports){
+        if(err){req.flash('errors', {msg: "Unable to find all sports"});}
+        res.render('sports/list', {allSports: allSports});
+    })
+};

@@ -142,6 +142,7 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 app.get('/create', sportsController.createSportForm);
 app.post('/createSport', sportsController.createSport);
 app.post('/createSports', sportsController.createSports);
+app.get("/list", sportsController.showSports);
 
 /**
  * API examples routes.
