@@ -1,33 +1,34 @@
 const Venue = require("../models/Venue");
 const multer = require('multer');
 
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, 'uploads/')
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + '-' + Date.now()+'.jpg')
-//     }
-// });
-
-// var upload = multer({ storage: storage }).single('file');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now()+'.jpg')
+    }
+});
+console.log(Date.now());
+var upload = multer({ storage: storage }).single('file');
 
 exports.createVenueForm = (req, res) => {
 //
-//     // const imagePath = req.files.upload.path;
-//     // const imageName = req.files.upload.name;
-//     upload(req, res, function (err) {
-//         if (err) {
-//             // An error occurred when uploading
-//             return
-//         }
-//         res.json({
-//             success: true,
-//             message: "Image Uploaded"
-//         })
-//
-//         // Everything went fine
-//     });
+    // const imagePath = req.files.upload.path;
+    // const imageName = req.files.upload.name;
+    upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+             res.json({
+                err:err
+
+            })
+        }
+        res.json({
+            success: true,
+            message: "Image Uploaded"
+        })
+    });
 
         Venue.create({
             name: req.body.name,
