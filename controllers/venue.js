@@ -19,17 +19,11 @@ exports.createVenueForm = (req, res) => {
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
-             res.json({
+            return res.json({
                 err:err
 
             })
         }
-        res.json({
-            success: true,
-            message: "Image Uploaded"
-        })
-    });
-
         Venue.create({
             name: req.body.name,
             address: req.body.address,
@@ -39,12 +33,21 @@ exports.createVenueForm = (req, res) => {
             sports: [{name:"cricket"},{name:"football"}],
             // photos:[{name:req.files.upload.name, path:req.files.upload.path}]
         }, function(err, venue){
-            if(err){console.log(err)}else{
+            if(err){console.log(err)
+            return res.json({err:err})
+            }else{
                 console.log(venue);
 
                 res.json(venue);
             }
         })
+
+        // res.json({
+        //     success: true,
+        //     message: "Image Uploaded"
+        // })
+    });
+
 };
 
 //
