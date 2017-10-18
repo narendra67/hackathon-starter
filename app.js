@@ -20,7 +20,19 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
+// const upload = multer({ dest: path.join(__dirname, 'uploads') });
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now()+'.jpg')
+    }
+});
+
+var upload = multer({ storage: storage }).single('file');
+
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -37,6 +49,9 @@ const contactController = require('./controllers/contact');
 
 //sports controllers route handler
 const sportsController = require('./controllers/sport');
+
+// venue controllers route handler
+const venueController = require("./controllers/venue");
 /**
  * API keys and Passport configuration.
  */
@@ -72,8 +87,8 @@ app.use(sass({
   dest: path.join(__dirname, 'public')
 }));
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ limit:'50mb', extended: true }));
 app.use(expressValidator());
 app.use(session({
   resave: true,
@@ -145,9 +160,17 @@ app.post('/createSports', sportsController.createSports);
 app.get("/list", sportsController.showSports);
 app.get('/sport/:name', sportsController.showSport);
 
+//routes for venue page
+app.get("/venueCreate", venueController.createVenueForm);
+app.post("/venueCreate", venueController.createVenueForm);
+// app.post("/upload", venueController.upload);
+app.get("/venueGet", venueController.showVenue);
+app.post("/venueUpdate/:id", venueController.updateVenue);
+app.post("/venueDelete/:id", venueController.deleteVenue);
+
 //routes for extension
 app.post('/createExtension', sportsController.createExtension);
-
+app.get('/allSportsList', sportsController.allSportsList);
 
 /**
  * API examples routes.
@@ -176,8 +199,8 @@ app.get('/api/paypal', apiController.getPayPal);
 app.get('/api/paypal/success', apiController.getPayPalSuccess);
 app.get('/api/paypal/cancel', apiController.getPayPalCancel);
 app.get('/api/lob', apiController.getLob);
-app.get('/api/upload', apiController.getFileUpload);
-app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
+// app.get('/api/upload', apiController.getFileUpload);
+// app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
 app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
 app.get('/api/google-maps', apiController.getGoogleMaps);
@@ -242,5 +265,27 @@ app.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
   console.log('  Press CTRL-C to stop\n');
 });
+
+app.post('/profile', function (req, res) {
+    upload(req, res, function (err) {
+
+
+        console.log(arguments);
+        if (err) {
+            // An error occurred when uploading
+            return         res.json({
+                err:err
+
+            })
+        }
+        res.json({
+            success: true,
+            message: "Image Uploaded"
+        })
+
+        // Everything went fine
+    })
+})
+
 
 module.exports = app;
