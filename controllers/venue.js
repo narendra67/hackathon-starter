@@ -10,7 +10,7 @@ var storage = multer.diskStorage({
     }
 });
 // console.log(Date.now());
-var upload = multer({ storage: storage }).single('file');
+var upload = multer({ storage: storage }).array('file');
 
 exports.createVenueForm = (req, res) => {
     console.log(req.body);
