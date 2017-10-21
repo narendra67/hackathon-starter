@@ -19,6 +19,10 @@ const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
+const readChunk = require("read-chunk");
+const fileType = require("file-type");
+const fs = require('fs');
+
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -27,7 +31,7 @@ var storage = multer.diskStorage({
         cb(null, 'uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now()+'.jpg')
+        cb(null, file.fieldname + '-' + Date.now())
     }
 });
 
@@ -269,8 +273,19 @@ app.listen(app.get('port'), () => {
 app.post('/profile', function (req, res) {
     upload(req, res, function (err) {
 
+        const buffer = readChunk.sync("./uploads/"+req.file.filename, 0, 4100);
+        fileType(buffer);
+        console.log(fileType(buffer))
 
-        console.log(arguments);
+        if(fileType(buffer).ext !== "jpg" ){
+            fs.unlink("./uploads/"+req.file.filename, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted /tmp/hello');
+            });
+        }
+        console.log(req.file.filename);
+
+        // console.log(arguments);
         if (err) {
             // An error occurred when uploading
             return         res.json({
