@@ -171,6 +171,10 @@ app.post("/venueCreate", venueController.createVenueForm);
 app.get("/venueGet", venueController.showVenue);
 app.post("/venueUpdate/:id", venueController.updateVenue);
 app.post("/venueDelete/:id", venueController.deleteVenue);
+app.post("/addVenueSport/:id", venueController.addVenueSport);
+app.post("/updateVenueSport/:id/:ids", venueController.updateVenueSport);
+
+
 
 //routes for extension
 app.post('/createExtension', sportsController.createExtension);

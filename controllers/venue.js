@@ -13,7 +13,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage }).array('file');
 
 exports.createVenueForm = (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
 
 
     // setInterval(function(){
@@ -22,7 +22,8 @@ exports.createVenueForm = (req, res) => {
 
 
         upload(req, res, function (err) {
-            console.log("inside upload");
+            // console.log("inside upload");
+            console.log(req.files[0].filename);
             if (err) {
                 // An error occurred when uploading
                 return res.json({
@@ -44,8 +45,8 @@ exports.createVenueForm = (req, res) => {
                 email: req.body.email,
                 phone: req.body.phone,
                 description: req.body.description,
-                sports: [{name: "cricket"}, {name: "football"}],
-                // photos:[{name:req.files.upload.name, path:req.files.upload.path}]
+                sports: [],
+                photos:[{path:"./uploads/"+req.files[0].filename}]
             }, function (err, venue) {
                 if (err) {
                     console.log(err)
@@ -64,12 +65,6 @@ exports.createVenueForm = (req, res) => {
     });
 };
 
-//
-// exports.upload =(req,res)=>{
-//     Venue.create({
-//         photos:[{name:req.files.upload.name, path:req.files.upload.path}]
-//     })
-// }
 
 exports.showVenue = (req, res) =>{
   Venue.find({}, function(err, venue){
@@ -94,3 +89,34 @@ exports.deleteVenue = (req, res) => {
         }
     } )
 };
+
+exports.addVenueSport = (req, res) => {
+    Venue.findById(req.params.id, function (err, venuesport) {
+      if(err){res.json(err)}else{
+          venuesport.sports= venuesport.sports.concat(req.body.sports)
+          venuesport.save(function(err, sport){
+              if(err){res.json(err)}else{
+                  res.json(sport);
+              }
+          })
+      }
+    })
+}
+
+exports.updateVenueSport = (req, res) => {
+    Venue.findById(req.params.id, function(err, venuesport){
+        if(err){res.json(err)}else {
+            console.log(req.body)
+            var s = venuesport.sports.id(req.params.ids)
+            s.set(req.body.sports[0])
+
+            venuesport.save(function (err, savedsport) {
+                if (err) {
+                    res.send(err)
+                } else {
+                    res.send(savedsport);
+                }
+            })
+        }
+    })
+}
