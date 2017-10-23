@@ -14,7 +14,7 @@ const venuePriceSchema = new mongoose.Schema({
 });
 const venueReviewSchema = new mongoose.Schema({
     rating: Number,
-    Description: String
+    description: String
 });
 
 const venueSchema = new mongoose.Schema({

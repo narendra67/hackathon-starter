@@ -173,6 +173,7 @@ app.post("/venueUpdate/:id", venueController.updateVenue);
 app.post("/venueDelete/:id", venueController.deleteVenue);
 app.post("/addVenueSport/:id", venueController.addVenueSport);
 app.post("/updateVenueSport/:id/:ids", venueController.updateVenueSport);
+app.post("/addVenueComments/:id", venueController.addVenueComments);
 
 
 

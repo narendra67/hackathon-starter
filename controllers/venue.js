@@ -120,3 +120,18 @@ exports.updateVenueSport = (req, res) => {
         }
     })
 }
+
+exports.addVenueComments = (req, res) => {
+    console.log(req.body);
+    Venue.findById(req.params.id, function(err, comment){
+        if(err){res.json(err)}else{
+            comment.reviews.push({"rating":req.body.rating, "description":req.body.description})
+            comment.save(function(err, com){
+                if(err){res.json(err)}else{
+                    res.json(com)
+                }
+            })
+        }
+    })
+}
+
