@@ -69,7 +69,7 @@ exports.createVenueForm = (req, res) => {
 exports.showVenue = (req, res) =>{
   Venue.find({}, function(err, venue){
       if(err){res.send("error showing venues")}else{
-          res.json(venue);
+          res.json({values: venue});
       }
   })
 };
