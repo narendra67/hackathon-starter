@@ -19,7 +19,8 @@ exports.createVenueForm = (req, res) => {
     // setInterval(function(){
     //     console.log(req.body)
     // }, 100)
-
+    console.log("consoling the request")
+    console.log(req.body)
 
         upload(req, res, function (err) {
             // console.log("inside upload");
@@ -39,6 +40,8 @@ exports.createVenueForm = (req, res) => {
                 return;
             } else {
                 // normal processing here
+                console.log("consoling the request")
+                console.log(req.body)
             Venue.create({
                 name: req.body.name,
                 address: req.body.address,

@@ -9,47 +9,64 @@ class App extends React.Component {
         this.state = {
             posts: []
         };
+        this.xyz = this.xyz.bind(this);
+
     }
 
     componentDidMount() {
+        this.xyz()
+    }
+
+
+    xyz(){
         axios.get(`/api/venueGet/`)
             .then(res => {
-                console.log(res.data)
-                console.log(res)
-
+                // console.log(res.data)data
+                console.log(res.data.values)
+// debugger
                 const posts = res.data.values
                 this.setState({posts:posts });
             });
+
     }
 
     render() {
         var my = {
-            color:"red",
+            padding: 10,
         }
+
         return (
             <div>
                 {/*<Header/>*/}
-                <table>
-                    <tbody>
+                <div>
+                    <div >
                     {this.state.posts.map((venue, i) => <TableRow key = {i}
                                                                   data = {venue} />)}
 
-                    </tbody>
-                </table>
+                    </div>
+                </div>
+                <VenueCreate updatemethod={this.xyz}/>
+                {this.state.posts.map((venue, i) => <UpdateVenue updatemethod={this.xyz} key = {i}
+                                                              data = {venue} />)}
             </div>
-        {VenueCreate}
         );
     }
 }
 
 class TableRow extends React.Component {
     render(){
+        var my = {
+            padding: 20,
+
+        }
         return(
-            <tr>
-                <td>{this.props.data.name}</td>
-                <td>{this.props.data.email}</td>
-                <td>{this.props.data.phone}</td>
-            </tr>
+            <div style={my}>
+                <div>{this.props.data._id}</div>
+                <div>{this.props.data.name}</div>
+                <div>{this.props.data.email}</div>
+                <div>{this.props.data.phone}</div>
+                <button type="submit" onClick={}>Update</button>
+            </div>
         )
     }
 }
@@ -58,27 +75,103 @@ class VenueCreate extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            name:"",
+            name:"hyd",
             email:"",
-            phone:""
+            phone:9080706050
         };
         this.updateStateEmail = this.updateStateEmail.bind(this);
-
+        this.createVenue = this.createVenue.bind(this);
+    }
+    createVenue(e){
+        axios.post(`/api/venueCreate/`, this.state)
+            .then(res => {
+                console.log(res.data)
+                this.props.updatemethod()
+            });
     }
 
     updateStateEmail(e){
         this.setState({email:e.target.value})
-        debugger;
-        console.log(e.target.value);
-        console.log(this.state);
+        // debugger;
+        // console.log(e.target.value);
+        // console.log(this.state);
     }
+    // updateStatePhone(e){
+    //     this.setState({phone:e.target.value})
+    //     // debugger;
+    //     console.log(e.target.value);
+    //     console.log(this.state);
+    // }
     render(){
-        return{
+        return(
             <div>
-             <input type="text" value={this.state.email}
-             onChage = {this.updateStateEmail} />
+                <input type="text" value={this.state.email}
+                       onChange = {this.updateStateEmail} />
+                {/*<input type="text" value={this.state.phone}*/}
+                       {/*onChange={this.updateStatePhone} />*/}
+                <input type="submit" onClick={this.createVenue}/>
+                {/*<input type="submit" onClick={this.props.updatemethod}/>*/}
             </div>
+        )
+    }
+}
+
+class UpdateVenue extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            name:"hyd",
+            email:"",
+            phone:9080706050
+        };
+        this.updateStateEmail = this.updateStateEmail.bind(this);
+        this.createVenue = this.createVenue.bind(this);
+    }
+    createVenue(e){
+        var id=this.props.data._id;
+        axios.post(`/api/venueUpdate/`+id, this.state)
+            .then(res => {
+                console.log(res.data)
+                this.props.updatemethod()
+            });
+    }
+
+    updateStateEmail(e){
+        this.setState({email:e.target.value})
+        // debugger;
+        // console.log(e.target.value);
+        // console.log(this.state);
+    }
+    // updateStatePhone(e){
+    //     this.setState({phone:e.target.value})
+    //     // debugger;
+    //     console.log(e.target.value);
+    //     console.log(this.state);
+    // }
+    render(){
+        var my = {
+            padding: 20,
+
         }
+
+        return(
+            <div>
+                <div>
+                    <div style={my}>{this.props.data._id}</div>
+                    <div style={my}>{this.props.data.name}</div>
+                    <div style={my}>{this.props.data.email}</div>
+                    <div style={my}>{this.props.data.phone}</div>
+
+                </div>
+                <input type="text" value={this.state.email}
+                       onChange = {this.updateStateEmail} />
+                <input type="submit" value="Update" onClick={this.createVenue}/>
+                {/*<input type="text" value={this.state.phone}*/}
+                {/*onChange={this.updateStatePhone} />*/}
+
+                {/*<input type="submit" onClick={this.props.updatemethod}/>*/}
+            </div>
+        )
     }
 }
 
