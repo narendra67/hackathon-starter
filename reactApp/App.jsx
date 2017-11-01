@@ -37,6 +37,7 @@ class App extends React.Component {
                     </tbody>
                 </table>
             </div>
+        {VenueCreate}
         );
     }
 }
@@ -50,6 +51,34 @@ class TableRow extends React.Component {
                 <td>{this.props.data.phone}</td>
             </tr>
         )
+    }
+}
+
+class VenueCreate extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            name:"",
+            email:"",
+            phone:""
+        };
+        this.updateStateEmail = this.updateStateEmail.bind(this);
+
+    }
+
+    updateStateEmail(e){
+        this.setState({email:e.target.value})
+        debugger;
+        console.log(e.target.value);
+        console.log(this.state);
+    }
+    render(){
+        return{
+            <div>
+             <input type="text" value={this.state.email}
+             onChage = {this.updateStateEmail} />
+            </div>
+        }
     }
 }
 

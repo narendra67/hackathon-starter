@@ -23,7 +23,7 @@ exports.createVenueForm = (req, res) => {
 
         upload(req, res, function (err) {
             // console.log("inside upload");
-            console.log(req.files[0].filename);
+            // console.log(req.files[0].filename);
             if (err) {
                 // An error occurred when uploading
                 return res.json({
@@ -46,7 +46,7 @@ exports.createVenueForm = (req, res) => {
                 phone: req.body.phone,
                 description: req.body.description,
                 sports: [],
-                photos:[{path:"./uploads/"+req.files[0].filename}]
+                // photos:[{path:"./uploads/"+req.files[0].filename}]
             }, function (err, venue) {
                 if (err) {
                     console.log(err)
