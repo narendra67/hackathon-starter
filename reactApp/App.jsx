@@ -9,16 +9,17 @@ class App extends React.Component {
         this.state = {
             posts: []
         };
-        this.xyz = this.xyz.bind(this);
+        this.updatePage = this.updatePage.bind(this);
+        this.editVenue = this.editVenue.bind(this);
 
     }
 
     componentDidMount() {
-        this.xyz()
+        this.updatePage()
     }
 
 
-    xyz(){
+    updatePage(){
         axios.get(`/api/venueGet/`)
             .then(res => {
                 // console.log(res.data)data
@@ -28,6 +29,9 @@ class App extends React.Component {
                 this.setState({posts:posts });
             });
 
+    }
+    editVenue(id){
+        this.setState({editId:id})
     }
 
     render() {
@@ -41,19 +45,27 @@ class App extends React.Component {
                 <div>
                     <div >
                     {this.state.posts.map((venue, i) => <TableRow key = {i}
-                                                                  data = {venue} />)}
+                                                                  data = {venue} EditVenue={this.editVenue}/>)}
 
                     </div>
                 </div>
-                <VenueCreate updatemethod={this.xyz}/>
-                {this.state.posts.map((venue, i) => <UpdateVenue updatemethod={this.xyz} key = {i}
-                                                              data = {venue} />)}
+                <VenueCreate updatemethod={this.updatePage}/>
+                <EditVenue editId={this.state.editId} updatemethod={this.updatePage}/>
             </div>
         );
     }
 }
 
 class TableRow extends React.Component {
+    constructor(props){
+        super(props);
+        this.sendEditId = this.sendEditId.bind(this);
+    }
+
+    sendEditId(){
+        this.props.EditVenue(this.props.data._id);
+    }
+
     render(){
         var my = {
             padding: 20,
@@ -65,7 +77,7 @@ class TableRow extends React.Component {
                 <div>{this.props.data.name}</div>
                 <div>{this.props.data.email}</div>
                 <div>{this.props.data.phone}</div>
-                <button type="submit" onClick={}>Update</button>
+                <button type="submit" onClick={this.sendEditId}>Update</button>
             </div>
         )
     }
@@ -116,7 +128,7 @@ class VenueCreate extends React.Component {
     }
 }
 
-class UpdateVenue extends React.Component{
+class EditVenue extends React.Component{
     constructor(props){
         super(props);
         this.state = {
@@ -125,10 +137,12 @@ class UpdateVenue extends React.Component{
             phone:9080706050
         };
         this.updateStateEmail = this.updateStateEmail.bind(this);
-        this.createVenue = this.createVenue.bind(this);
+        this.updateVenue = this.updateVenue.bind(this);
     }
-    createVenue(e){
-        var id=this.props.data._id;
+    updateVenue(e){
+        var id=this.props.editId;
+        console.log("=============");
+        console.log(id);
         axios.post(`/api/venueUpdate/`+id, this.state)
             .then(res => {
                 console.log(res.data)
@@ -156,20 +170,10 @@ class UpdateVenue extends React.Component{
 
         return(
             <div>
-                <div>
-                    <div style={my}>{this.props.data._id}</div>
-                    <div style={my}>{this.props.data.name}</div>
-                    <div style={my}>{this.props.data.email}</div>
-                    <div style={my}>{this.props.data.phone}</div>
+                <input type="text" onChange = {this.updateStateEmail}/>
 
-                </div>
-                <input type="text" value={this.state.email}
-                       onChange = {this.updateStateEmail} />
-                <input type="submit" value="Update" onClick={this.createVenue}/>
-                {/*<input type="text" value={this.state.phone}*/}
-                {/*onChange={this.updateStatePhone} />*/}
+                <input type="submit" value="Update" onClick={this.updateVenue}/>
 
-                {/*<input type="submit" onClick={this.props.updatemethod}/>*/}
             </div>
         )
     }
