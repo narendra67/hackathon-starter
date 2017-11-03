@@ -1,16 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import Button from 'material-ui/Button';
+import TextField from 'material-ui/TextField';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            posts: []
+            posts: [],
+            clicked: false
         };
         this.updatePage = this.updatePage.bind(this);
         this.editVenue = this.editVenue.bind(this);
+        // this.handleClick = this.handleClick.bind(this);
 
     }
 
@@ -30,9 +34,17 @@ class App extends React.Component {
             });
 
     }
-    editVenue(id){
-        this.setState({editId:id})
+    editVenue(value){
+        this.state.editValues ? this.setState({editValues:null}) :this.setState({editValues:value})
+
     }
+
+    // handleClick() {
+    //     console.log("clicked")
+    //     this.setState({
+    //         clicked: true
+    //     });
+    // }
 
     render() {
         var my = {
@@ -41,16 +53,19 @@ class App extends React.Component {
 
         return (
             <div>
+                {this.state.editValues ? <EditVenue editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}
+
                 {/*<Header/>*/}
                 <div>
                     <div >
                     {this.state.posts.map((venue, i) => <TableRow key = {i}
-                                                                  data = {venue} EditVenue={this.editVenue}/>)}
-
+                                                                  data = {venue}
+                                                                  EditVenue={this.editVenue}/>)}
                     </div>
                 </div>
                 <VenueCreate updatemethod={this.updatePage}/>
-                <EditVenue editId={this.state.editId} updatemethod={this.updatePage}/>
+                {this.state.editValues ? <DeleteVenue editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}
+
             </div>
         );
     }
@@ -63,7 +78,7 @@ class TableRow extends React.Component {
     }
 
     sendEditId(){
-        this.props.EditVenue(this.props.data._id);
+        this.props.EditVenue(this.props.data);
     }
 
     render(){
@@ -77,7 +92,8 @@ class TableRow extends React.Component {
                 <div>{this.props.data.name}</div>
                 <div>{this.props.data.email}</div>
                 <div>{this.props.data.phone}</div>
-                <button type="submit" onClick={this.sendEditId}>Update</button>
+                <Button type="submit" onClick={this.sendEditId}>Update</Button>
+                <Button type="submit" onClick={this.sendEditId}>Delete</Button>
             </div>
         )
     }
@@ -117,11 +133,11 @@ class VenueCreate extends React.Component {
     render(){
         return(
             <div>
-                <input type="text" value={this.state.email}
+                <TextField type="text" value={this.state.email}
                        onChange = {this.updateStateEmail} />
                 {/*<input type="text" value={this.state.phone}*/}
                        {/*onChange={this.updateStatePhone} />*/}
-                <input type="submit" onClick={this.createVenue}/>
+                <Button type="submit" onClick={this.createVenue}> Submit</Button>
                 {/*<input type="submit" onClick={this.props.updatemethod}/>*/}
             </div>
         )
@@ -131,16 +147,17 @@ class VenueCreate extends React.Component {
 class EditVenue extends React.Component{
     constructor(props){
         super(props);
+
         this.state = {
-            name:"hyd",
-            email:"",
-            phone:9080706050
+            name:this.props.editValues ? this.props.editValues.name : "hyd",
+            email:this.props.editValues ? this.props.editValues.email : "enter mail",
+            phone:9087609877
         };
         this.updateStateEmail = this.updateStateEmail.bind(this);
         this.updateVenue = this.updateVenue.bind(this);
     }
     updateVenue(e){
-        var id=this.props.editId;
+        var id=this.props.editValues._id;
         console.log("=============");
         console.log(id);
         axios.post(`/api/venueUpdate/`+id, this.state)
@@ -167,16 +184,53 @@ class EditVenue extends React.Component{
             padding: 20,
 
         }
-
+        // var val = this.props.editValues._id
+    console.log(this.props.editValues.name)
         return(
             <div>
-                <input type="text" onChange = {this.updateStateEmail}/>
+                <TextField
+                    label="email"
+                    id="email"
+                    type="text"  value={this.state.email} onChange = {this.updateStateEmail}/>
 
-                <input type="submit" value="Update" onClick={this.updateVenue}/>
+                <Button type="submit" onClick={this.updateVenue}>Update</Button>
 
             </div>
         )
     }
+}
+
+class DeleteVenue extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+        }
+        this.deleteVenue = this.deleteVenue.bind(this);
+    }
+
+    deleteVenue(e){
+        var id=this.props.editValues._id;
+        console.log("=============");
+        console.log(id);
+        axios.post(`/api/venueDelete/`+id)
+            .then(res => {
+                console.log(res.data)
+                this.props.updatemethod()
+            });
+    }
+
+    render(){
+
+        console.log(this.props.editValues.name)
+        return(
+            <div>
+
+                <Button type="submit" onClick={this.deleteVenue}>Delete</Button>
+
+            </div>
+        )
+    }
+
 }
 
 export default App;

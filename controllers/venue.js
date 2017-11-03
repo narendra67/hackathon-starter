@@ -78,15 +78,18 @@ exports.showVenue = (req, res) =>{
 };
 
 exports.updateVenue = (req, res) => {
-    Venue.findOneAndUpdate(req.params.id, req.body,{new: true}, function(err, venue){
+    Venue.findOneAndUpdate({_id:req.params.id}, req.body,{new: true}, function(err, venue){
+        console.log(req.params.id)
+        console.log(req.body)
         if(err){res.send("cannot update")}else{
             res.json(venue);
+            console.log(venue);
         }
     } )
 };
 
 exports.deleteVenue = (req, res) => {
-    Venue.deleteOne(req.params.id, function(err, venue){
+    Venue.deleteOne({_id:req.params.id}, function(err, venue){
         if(err){res.send("cannot update")}else{
             res.json(venue);
         }
