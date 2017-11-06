@@ -12,7 +12,7 @@ class App extends React.Component {
 
         this.state = {
             posts: [],
-            clicked: false
+            // sports:[]
         };
         this.updatePage = this.updatePage.bind(this);
         this.editVenue = this.editVenue.bind(this);
@@ -33,6 +33,14 @@ class App extends React.Component {
             });
 
     }
+    // updateSports(){
+    //     axios.get(`/api/venueGet/`)
+    //         .then(res => {
+    //             const posts = res.data.values
+    //             this.setState({posts:posts });
+    //         });
+    // }
+
     editVenue(value){
         this.state.editValues ? this.setState({editValues:null}) :this.setState({editValues:value})
     }
@@ -43,6 +51,9 @@ class App extends React.Component {
                 this.updatePage()
             });
     }
+    editSport(ids){
+        this.setState({sportValues:ids})
+    }
 
     render() {
         var my = {
@@ -52,17 +63,29 @@ class App extends React.Component {
         return (
             <div>
                 {this.state.editValues ? <EditVenue editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}
+                {this.state.editValues ? <AddSports editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}
+                {this.state.editValues ? <EditSports editValues={this.state.editValues} sportValues={this.state.sportValues} updatemethod={this.updatePage}/>: null}
 
-                <div>
+
                     <div >
                     {this.state.posts.map((venue, i) => <TableRow key = {i}
                                                                   data = {venue}
                                                                   EditVenue={this.editVenue}
                                                                   DeleteVenue={this.deleteVenue}
+                                                                  EditSport={this.editSport}
                     />)}
                     </div>
-                </div>
+                {/*<div >*/}
+                    {/*{this.state.sports.map((sport, i) => <TableRow key = {i}*/}
+                                                                  {/*data = {sport}*/}
+                                                                  {/*EditVenue={this.editVenue}*/}
+                                                                  {/*DeleteVenue={this.deleteVenue}*/}
+                    {/*/>)}*/}
+                {/*</div>*/}
+
                 <VenueCreate updatemethod={this.updatePage}/>
+
+
 
             </div>
         );
@@ -74,6 +97,7 @@ class TableRow extends React.Component {
         super(props);
         this.sendEditData = this.sendEditData.bind(this);
         this.sendEditId = this.sendEditId.bind(this);
+        this.sendSportData = this.sendSportData.bind(this);
     }
 
     sendEditData(){
@@ -82,6 +106,9 @@ class TableRow extends React.Component {
 
     sendEditId(){
         this.props.DeleteVenue(this.props.data._id);
+    }
+    sendSportData(){
+        this.props.EditSport(this.props.data.sports.this._id);
     }
 
     render(){
@@ -92,12 +119,23 @@ class TableRow extends React.Component {
             width: "300px",
             margin: "5px"
         }
+        console.log(this.props.data)
         return(
             <div style={my}>
-                <div>{this.props.data._id}</div>
-                <div>{this.props.data.name}</div>
-                <div>{this.props.data.email}</div>
-                <div>{this.props.data.phone}</div>
+                {/*<div>{this.props.data._id}</div>*/}
+                <div>Name: {this.props.data.name}</div>
+                <div>email: {this.props.data.email}</div>
+                <div>phone: {this.props.data.phone}</div>
+                <div>sports: {this.props.data.sports.map((sport, j) =>
+                    <span>
+                        {/*sportId = {this.props.data.sports[j]._id}*/}
+                        <button
+                            type="submit" onClick={this.sendSportData}>{this.props.data.sports[j].name}
+                        </button>,
+                    </span>)}
+                </div>
+
+                {/*<div>sports: {this.props.data.sports[i].name}</div>*/}
                 <Button type="submit" onClick={this.sendEditData}>Update</Button>
                 <Button type="submit" onClick={this.sendEditId}>Delete</Button>
             </div>
@@ -156,10 +194,13 @@ class EditVenue extends React.Component{
         this.state = {
             name:this.props.editValues ? this.props.editValues.name : "hyd",
             email:this.props.editValues ? this.props.editValues.email : "enter mail",
-            phone:9087609877
+            phone:9087609877,
+            // sports: [this.props.editValues ? this.props.editValues: "Enter a sport"]
         };
         this.updateStateEmail = this.updateStateEmail.bind(this);
         this.updateVenue = this.updateVenue.bind(this);
+        // this.updateStateSports = this.updateStateSports.bind(this);
+
     }
     updateVenue(e){
         var id=this.props.editValues._id;
@@ -176,6 +217,12 @@ class EditVenue extends React.Component{
 
     }
 
+    // updateStateSports(e){
+    //     this.setState({sports:e.target.value})
+    //
+    // }
+
+
     render(){
         var my = {
             padding: 20,
@@ -188,6 +235,7 @@ class EditVenue extends React.Component{
                     label="email"
                     id="email"
                     type="text"  value={this.state.email} onChange = {this.updateStateEmail}/>
+                {/*<TextField label="sports" id="sports" type="text" onChange={this.updateStateSports}/>*/}
 
                 <Button type="submit" onClick={this.updateVenue}>Update</Button>
 
@@ -196,5 +244,94 @@ class EditVenue extends React.Component{
     }
 }
 
+class AddSports extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            sports:[],
+        }
+        this.addSport= this.addSport.bind(this);
+        this.updateStateSport= this.updateStateSport.bind(this);
+    }
+
+    addSport(e){
+        var id=this.props.editValues._id;
+
+        axios.post(`/api/addVenueSport/`+id, this.state)
+            .then(res => {
+                console.log(res.data)
+                this.props.updatemethod()
+            });
+    }
+
+    updateStateSport(e){
+        this.setState({sports:[{name:e.target.value}]})
+
+    }
+
+    render(){
+
+        return(
+            <div>
+                <TextField
+                    label="name"
+                    id="name"
+                    type="text"  onChange = {this.updateStateSport}/>
+                {/*<TextField label="sports" id="sports" type="text" onChange={this.updateStateSports}/>*/}
+
+                <Button type="submit" onClick={this.addSport}>Add Sports</Button>
+
+            </div>
+        )
+    }
+
+}
+
+class EditSports extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            sports: [],
+        }
+        this.updateSport= this.updateSport.bind(this);
+        this.updateStateSport= this.updateStateSport.bind(this);
+    }
+
+    updateSport(e){
+        var id=this.props.editValues._id;
+        var ids = this.props.sportValues
+
+        axios.post(`/api/updateVenueSport/`+id+`/`+ids, this.state)
+            .then(res => {
+                console.log(res.data)
+                this.props.updatemethod()
+            });
+    }
+
+    updateStateSport(e){
+        this.setState({sports:[{name:e.target.value}]})
+
+    }
+
+    render(){
+
+        return(
+            <div>
+                <TextField
+                    label="name"
+                    id="name"
+                    type="text"  onChange = {this.updateStateSport}/>
+                {/*<TextField label="sports" id="sports" type="text" onChange={this.updateStateSports}/>*/}
+
+                <Button type="submit" onClick={this.addSport}>Update Sports</Button>
+
+            </div>
+        )
+    }
+
+}
 
 export default App;
+
+
+
