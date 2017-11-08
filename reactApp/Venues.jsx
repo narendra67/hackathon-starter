@@ -46,7 +46,8 @@ class Venues extends Component {
     // }
 
     editVenue(value){
-        this.state.editValues ? this.setState({editValues:null}) :this.setState({editValues:value})
+        this.props.editVenue(value)
+        // this.state.editValues ? this.setState({editValues:null}) :this.setState({editValues:value})
     }
     deleteVenue(id){
         axios.post(`/api/venueDelete/`+id)
@@ -66,7 +67,7 @@ class Venues extends Component {
 
         return (
             <div>
-                {this.state.editValues ? <EditVenue editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}
+                {/*{this.state.editValues ? <EditVenue editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}*/}
                 {/*{this.state.editValues ? <AddSports editValues={this.state.editValues} updatemethod={this.updatePage}/>: null}*/}
                 {/*{this.state.editValues ? <EditSports editValues={this.state.editValues} sportValues={this.state.sportValues} updatemethod={this.updatePage}/>: null}*/}
 
@@ -87,7 +88,7 @@ class Venues extends Component {
                 {/*/>)}*/}
                 {/*</div>*/}
 
-                <VenueCreate updatemethod={this.updatePage}/>
+                {/*<VenueCreate updatemethod={this.updatePage}/>*/}
 
 
 
@@ -123,15 +124,15 @@ class TableRow extends React.Component {
             width: "300px",
             margin: "5px"
         }
-        console.log(this.props.data)
+        // console.log(this.props.data)
         return(
-            <div style={my}>t
+            <div style={my}>
                 {/*<div>{this.props.data._id}</div>*/}
                 <div>Name: {this.props.data.name}</div>
                 <div>email: {this.props.data.email}</div>
                 <div>phone: {this.props.data.phone}</div>
                 <div>sports: {this.props.data.sports.map((sport, j) =>
-                    <span>
+                    <span key={j}>
                         {/*sportId = {this.props.data.sports[j]._id}*/}
 
                         {/*type="submit" onClick={this.sendSportData}>*/}
@@ -141,7 +142,7 @@ class TableRow extends React.Component {
                 </div>
 
                 {/*<div>sports: {this.props.data.sports[i].name}</div>*/}
-                <Link to="/update_venue" ><Button type="submit" onClick={this.sendEditData}>Update</Button></Link>
+                <Link to="/update_venue" onClick={this.sendEditData}>Update</Link>
                 <Button type="submit" onClick={this.sendEditId}>Delete</Button>
             </div>
         )
